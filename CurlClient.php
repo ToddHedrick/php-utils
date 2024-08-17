@@ -1,5 +1,7 @@
 <?php
 require_once 'Logger.php';
+// Normally this will be done in another file. Just putting this here to ensure we have it set for this class
+$GLOBALS['log'] = (isset($GLOBALS['log']) and $GLOBALS['log'] instanceof Logger) ? $GLOBALS['log'] : new Logger();
 
 /**
  * @author Todd Hedrick
@@ -222,7 +224,7 @@ class CurlClient {
 
         // debugging for curl
         if (isset($this->config['curl_debug']) && $this->config['curl_debug']) {
-            Logger::info(__METHOD__ . "::" . __LINE__
+            $GLOBALS['log']->info(__METHOD__ . "::" . __LINE__
                 . PHP_EOL . "---------------------- [INFO] URL: " . print_r($url, 1)
                 . PHP_EOL . "---------------------- [INFO] HTTP Headers ~BEGIN~ ----------------------"
                 . PHP_EOL . print_r($headers, 1)
@@ -252,7 +254,7 @@ class CurlClient {
 
         // debug HTTP response body
         if (isset($this->config['curl_debug']) && $this->config['curl_debug']) {
-            Logger::info(__METHOD__ . "::" . __LINE__
+            $GLOBALS['log']->info(__METHOD__ . "::" . __LINE__
                 . PHP_EOL . "---------------------- [INFO] URL: " . print_r($url, 1)
                 . PHP_EOL . "---------------------- [INFO] HTTP Response ~BEGIN~ ----------------------"
                 . PHP_EOL . print_r($response, 1)
@@ -285,13 +287,13 @@ class CurlClient {
         } elseif ($return_array['http_code'] >= 500) {
             $this->lasterror_num = $return_array['http_code'];
             $this->lasterror_msg = json_encode($return_array);
-            Logger::fatal(__METHOD__ . "::" . __LINE__
+            $GLOBALS['log']->fatal(__METHOD__ . "::" . __LINE__
                 . PHP_EOL . "---------------------- [FATAL] {$return_array['http_code']} URL: " . print_r($url, 1)
                 . PHP_EOL . "---------------------- [FATAL] HTTP Response ~BEGIN~ ----------------------"
                 . PHP_EOL . print_r($return_array, 1)
                 . PHP_EOL . "----------------------  [FATAL] HTTP Response ~END~  ----------------------");
         } elseif ($return_array['http_code'] >= 400 && $return_array['http_code'] <= 499) {
-            Logger::error(__METHOD__ . "::" . __LINE__
+            $GLOBALS['log']->error(__METHOD__ . "::" . __LINE__
                 . PHP_EOL . "---------------------- [ERROR] {$return_array['http_code']} URL: " . print_r($url, 1)
                 . PHP_EOL . "---------------------- [ERROR] HTTP Response ~BEGIN~ ----------------------"
                 . PHP_EOL . print_r($return_array, 1)
